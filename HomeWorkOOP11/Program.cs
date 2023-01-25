@@ -144,7 +144,7 @@
             bool isUserChoice = true;
 
             Console.WriteLine("Желаете добавить рыбку?");
-            Console.WriteLine($"{CommandAddFishes}-Добавить рыбок");
+            Console.WriteLine($"{CommandAddFishes}-Добавить случайную рыбку");
             Console.WriteLine($"{CommandRemoveFishes}-Вытащить рыбок");
             Console.WriteLine($"{CommandNo}-Отказаться");
 

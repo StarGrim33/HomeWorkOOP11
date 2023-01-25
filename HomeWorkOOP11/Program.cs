@@ -186,7 +186,7 @@
 
             if(isNumber)
             {
-                if(userChoice <= _fish.Count)
+                if(userChoice <= _fish.Count && userChoice > 0)
                 {
                     _fish.RemoveAt(userChoice - 1);
                     Console.WriteLine($"Рыбка вынута");

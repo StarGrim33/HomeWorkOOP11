@@ -97,7 +97,7 @@
 
         public void ShowPopulation()
         {
-            string fishesAlive = "Перед нами красочный аквариум, самые красивые и необычные рыбки плавают и радуются жизни";
+            string fishesAlive = "Перед Вами красочный аквариум, самые красивые и необычные рыбки плавают и радуются жизни";
             string fishesAreDead = "Аквариум пуст, рыбки состарились";
 
             if(HasAliveFishes)
@@ -148,7 +148,7 @@
             Console.WriteLine($"{CommandRemoveFishes}-Вытащить рыбок");
             Console.WriteLine($"{CommandNo}-Отказаться");
 
-            string userInput = Console.ReadLine();
+            string? userInput = Console.ReadLine();
 
             while(isUserChoice)
             {
@@ -169,7 +169,7 @@
                         break;
 
                     default:
-                        Console.WriteLine("Нужно ввести цифру");
+                        Console.WriteLine("Нужно ввести цифру пункта меню");
                         isUserChoice = false;
                         break;
                 }
@@ -250,11 +250,6 @@
         public string Name { get; protected set; }
         public int Age { get; protected set; } = 0;
         public int Health { get; protected set; } = 100;
-
-        public void ShowStats()
-        {
-            Console.WriteLine($"{Name}, здоровье: {Health}, возраст: {Age}");
-        }
 
         public virtual void GrowOld()
         {

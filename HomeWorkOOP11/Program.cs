@@ -6,7 +6,8 @@
         {
             Aquarium aquarium = new();
             FishBuilder fishBuilder = new();
-            aquarium.Run(fishBuilder, aquarium);
+            User user = new();
+            user.Run(fishBuilder, aquarium);
         }
     }
 
@@ -27,37 +28,6 @@
 
         public bool HasAliveFishes => _fishes.Count > 0;
         public int FishesCount => _fishes.Count;
-
-        public void Run(FishBuilder fish, Aquarium aquarium)
-        {
-            const string CommandStartALife = "1";
-            const string CommandExit = "2";
-
-            Console.WriteLine($"Жизнь аквариумная, жизнь общажная!\n");
-            Console.WriteLine($"{CommandStartALife}-Начать жизнь в аквариуме");
-            Console.WriteLine($"{CommandExit}-Выйти");
-
-            string? userInput = Console.ReadLine();
-            bool isProgramOn = true;
-
-            while(isProgramOn)
-            {
-                switch (userInput)
-                {
-                    case CommandStartALife:
-                        Start(fish, aquarium);
-                        break;
-
-                    case CommandExit:
-                        isProgramOn = false;
-                        break;
-
-                    default:
-                        Console.WriteLine("Ввведите цифру пункта меню");
-                        break;
-                }
-            }
-        }
 
         public void ShowPopulation()
         {
@@ -90,32 +60,7 @@
             _fishes.RemoveAt(index - 1);
         }
 
-        private void Start(FishBuilder fish, Aquarium aquarium)
-        {
-            User user = new();
-
-            ShowPopulation();
-            Console.WriteLine($"{new string('-', 25)}");
-
-            while(HasAliveFishes)
-            {
-                SkipDay();
-                RemoveDead();
-
-                Console.Clear();
-                ShowPopulation();
-                user.AskAddFishes(fish, aquarium);
-            }
-
-            if (HasAliveFishes == false)
-            {
-                Console.WriteLine("Все рыбки состарились и умерли");
-            }
-
-            Console.ReadKey();
-        }
-
-        private void SkipDay()
+        public void SkipDay()
         {
             foreach (Fish fish in _fishes)
             {
@@ -125,7 +70,7 @@
             Console.WriteLine("Одна итерация старения прошла, нажмите любую клавишу");
         }
 
-        private void RemoveDead()
+        public void RemoveDead()
         {
             for (int i = 0; i < _fishes.Count; i++)
             {
@@ -231,7 +176,6 @@
         }
     }
 
-
     class Salmon : Fish
     {
         public Salmon(string name, int health, int age) : base(name, health, age)
@@ -267,7 +211,7 @@
 
         public string Name { get; set; }
 
-        public string ToWelcome()
+        private string ToWelcome()
         {
             Console.WriteLine("Как Вас зовут?");
             string? userName = Console.ReadLine();
@@ -280,7 +224,40 @@
             return userName;
         }
 
-        public void AskAddFishes(FishBuilder fishBuilder, Aquarium aquarium)
+        public void Run(FishBuilder fish, Aquarium aquarium)
+        {
+            const string CommandStartALife = "1";
+            const string CommandExit = "2";
+
+            Console.Clear();
+            Console.WriteLine($"Здравствуйте, {Name}");
+            Console.WriteLine($"Жизнь аквариумная, жизнь общажная!\n");
+            Console.WriteLine($"{CommandStartALife}-Начать жизнь в аквариуме");
+            Console.WriteLine($"{CommandExit}-Выйти");
+
+            string? userInput = Console.ReadLine();
+            bool isProgramOn = true;
+
+            while (isProgramOn)
+            {
+                switch (userInput)
+                {
+                    case CommandStartALife:
+                        Start(fish, aquarium);
+                        break;
+
+                    case CommandExit:
+                        isProgramOn = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Ввведите цифру пункта меню");
+                        break;
+                }
+            }
+        }
+
+        private void AskAddFishes(FishBuilder fishBuilder, Aquarium aquarium)
         {
             const string CommandAddFishes = "1";
             const string CommandRemoveFishes = "2";
@@ -321,7 +298,7 @@
             }
         }
 
-        public void AskRemoveFish(Aquarium aquarium)
+        private void AskRemoveFish(Aquarium aquarium)
         {
             Console.Clear();
             Console.WriteLine("Какую рыбку Вы хотите достать из аквариума?");
@@ -345,6 +322,30 @@
             {
                 Console.WriteLine("Нужно ввести число");
             }
+        }
+
+        private void Start(FishBuilder fish, Aquarium aquarium)
+        {
+            aquarium.ShowPopulation();
+            Console.WriteLine($"{new string('-', 25)}");
+
+            while (aquarium.HasAliveFishes)
+            {
+                aquarium.SkipDay();
+                aquarium.RemoveDead();
+
+                Console.Clear();
+
+                aquarium.ShowPopulation();
+                AskAddFishes(fish, aquarium);
+            }
+
+            if (aquarium.HasAliveFishes == false)
+            {
+                Console.WriteLine("Все рыбки состарились и умерли");
+            }
+
+            Console.ReadKey();
         }
     }
 }

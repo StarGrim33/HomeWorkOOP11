@@ -4,10 +4,8 @@
     {
         static void Main(string[] args)
         {
-            Aquarium aquarium = new();
-            FishBuilder fishBuilder = new();
             User user = new();
-            user.Run(fishBuilder, aquarium);
+            user.Run();
         }
     }
 
@@ -20,13 +18,14 @@
         {
             int startAmount = 10;
 
-            for(int i = 0; i < startAmount; i++)
+            for (int i = 0; i < startAmount; i++)
             {
                 _fishes.Add(_fishBuilder.CreateRandomFish());
             }
         }
 
         public bool HasAliveFishes => _fishes.Count > 0;
+
         public int FishesCount => _fishes.Count;
 
         public void ShowPopulation()
@@ -50,9 +49,9 @@
             }
         }
 
-        public void AddFish(FishBuilder fishBuilder)
+        public void AddFish()
         {
-            _fishes.Add(fishBuilder.CreateRandomFish());
+            _fishes.Add(_fishBuilder.CreateRandomFish());
         }
 
         public void RemoveFish(int index)
@@ -82,42 +81,31 @@
 
     class FishBuilder
     {
-        public Aquarium Build()
+        private static Random _random = new();
+
+        private List<Fish> _fishTemplate;
+
+        public FishBuilder()
         {
-            int fishesCount = 10;
-
-            List<Fish> fish = new ();
-
-            for (int i = 0; i < fishesCount; i++)
+            _fishTemplate = new List<Fish>()
             {
-                fish.Add(CreateRandomFish());
-            }
-
-            return new Aquarium();
-        }
-
-        public Fish CreateRandomFish()
-        {
-            Random random = new();
-            var fishes = CreateFish();
-            int randomIndex = random.Next(fishes.Count);
-            return fishes[randomIndex];
-        }
-
-        private List<Fish> CreateFish()
-        {
-            return new List<Fish>()
-            {
-                new DropFish("Рыба капля", 100, 1),
+                new DropFish("Рыба капля", 120, 1),
                 new ClowFish("Рыба клоун", 160, 1),
                 new Pike("Щука", 120, 1),
                 new Salmon("Семга", 170, 1),
                 new Tuna("Тунец", 200, 1),
             };
         }
+
+        public Fish CreateRandomFish()
+        {
+            int randomIndex = _random.Next(_fishTemplate.Count);
+            Fish fish = _fishTemplate[randomIndex];
+            return new Fish(fish.Name, fish.Health, fish.Age);
+        }
     }
 
-    abstract class Fish
+    class Fish
     {
         public Fish(string name, int health, int age)
         {
@@ -127,7 +115,9 @@
         }
 
         public string Name { get; protected set; }
+
         public int Age { get; protected set; } = 0;
+
         public int Health { get; protected set; } = 100;
 
         public virtual void GrowOld()
@@ -139,9 +129,7 @@
 
     class DropFish : Fish
     {
-        public DropFish(string name, int health, int age) : base(name, health, age)
-        {
-        }
+        public DropFish(string name, int health, int age) : base(name, health, age) { }
 
         public override void GrowOld()
         {
@@ -152,22 +140,7 @@
 
     class ClowFish : Fish
     {
-        public ClowFish(string name, int health, int age) : base(name, health, age)
-        {
-        }
-
-        public override void GrowOld()
-        {
-            Health -= 20;
-            Age += 1;
-        }
-    }
-
-    class Pike : Fish
-    {
-        public Pike(string name, int health, int age) : base(name, health, age)
-        {
-        }
+        public ClowFish(string name, int health, int age) : base(name, health, age) { }
 
         public override void GrowOld()
         {
@@ -176,11 +149,20 @@
         }
     }
 
+    class Pike : Fish
+    {
+        public Pike(string name, int health, int age) : base(name, health, age) { }
+
+        public override void GrowOld()
+        {
+            Health -= 10;
+            Age += 1;
+        }
+    }
+
     class Salmon : Fish
     {
-        public Salmon(string name, int health, int age) : base(name, health, age)
-        {
-        }
+        public Salmon(string name, int health, int age) : base(name, health, age) { }
 
         public override void GrowOld()
         {
@@ -191,9 +173,7 @@
 
     class Tuna : Fish
     {
-        public Tuna(string name, int health, int age) : base(name, health, age)
-        {
-        }
+        public Tuna(string name, int health, int age) : base(name, health, age) { }
 
         public override void GrowOld()
         {
@@ -204,19 +184,21 @@
 
     class User
     {
+        private Aquarium _aquarium = new();
+
         public User()
         {
             Name = ToWelcome();
         }
 
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
         private string ToWelcome()
         {
             Console.WriteLine("Как Вас зовут?");
             string? userName = Console.ReadLine();
 
-            if(userName == null)
+            if (userName == null)
             {
                 return userName = "Аноним";
             }
@@ -224,7 +206,7 @@
             return userName;
         }
 
-        public void Run(FishBuilder fish, Aquarium aquarium)
+        public void Run()
         {
             const string CommandStartALife = "1";
             const string CommandExit = "2";
@@ -243,7 +225,7 @@
                 switch (userInput)
                 {
                     case CommandStartALife:
-                        Start(fish, aquarium);
+                        Start();
                         break;
 
                     case CommandExit:
@@ -257,7 +239,7 @@
             }
         }
 
-        private void AskAddFishes(FishBuilder fishBuilder, Aquarium aquarium)
+        private void AskAddFishes()
         {
             const string CommandAddFishes = "1";
             const string CommandRemoveFishes = "2";
@@ -277,12 +259,12 @@
                 switch (userInput)
                 {
                     case CommandAddFishes:
-                        aquarium.AddFish(fishBuilder);
+                        _aquarium.AddFish();
                         isUserChoice = false;
                         break;
 
                     case CommandRemoveFishes:
-                        AskRemoveFish(aquarium);
+                        AskRemoveFish();
                         isUserChoice = false;
                         break;
 
@@ -298,19 +280,19 @@
             }
         }
 
-        private void AskRemoveFish(Aquarium aquarium)
+        private void AskRemoveFish()
         {
             Console.Clear();
             Console.WriteLine("Какую рыбку Вы хотите достать из аквариума?");
-            aquarium.ShowPopulation();
+            _aquarium.ShowPopulation();
 
             bool isNumber = int.TryParse(Console.ReadLine(), out int userChoice);
 
             if (isNumber)
             {
-                if (userChoice <= aquarium.FishesCount && userChoice > 0)
+                if (userChoice <= _aquarium.FishesCount && userChoice > 0)
                 {
-                    aquarium.RemoveFish(userChoice);
+                    _aquarium.RemoveFish(userChoice);
                     Console.WriteLine($"Рыбка вынута");
                 }
                 else
@@ -324,23 +306,23 @@
             }
         }
 
-        private void Start(FishBuilder fish, Aquarium aquarium)
+        private void Start()
         {
-            aquarium.ShowPopulation();
+            _aquarium.ShowPopulation();
             Console.WriteLine($"{new string('-', 25)}");
 
-            while (aquarium.HasAliveFishes)
+            while (_aquarium.HasAliveFishes)
             {
-                aquarium.SkipDay();
-                aquarium.RemoveDead();
+                _aquarium.SkipDay();
+                _aquarium.RemoveDead();
 
                 Console.Clear();
 
-                aquarium.ShowPopulation();
-                AskAddFishes(fish, aquarium);
+                _aquarium.ShowPopulation();
+                AskAddFishes();
             }
 
-            if (aquarium.HasAliveFishes == false)
+            if (_aquarium.HasAliveFishes == false)
             {
                 Console.WriteLine("Все рыбки состарились и умерли");
             }

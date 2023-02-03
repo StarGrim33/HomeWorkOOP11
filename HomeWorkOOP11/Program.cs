@@ -16,12 +16,7 @@
 
         public Aquarium()
         {
-            int startAmount = 10;
-
-            for (int i = 0; i < startAmount; i++)
-            {
-                _fishes.Add(_fishBuilder.CreateRandomFish());
-            }
+            Fill();
         }
 
         public bool HasAliveFishes => _fishes.Count > 0;
@@ -44,8 +39,7 @@
 
             for (int i = 0; i < _fishes.Count; i++)
             {
-                var fish = _fishes[i];
-                Console.WriteLine($"{i + 1} - {fish.Name}, здоровье: {fish.Health}, возраст: {fish.Age}");
+                Console.WriteLine($"{i + 1} - {_fishes[i].Name}, здоровье: {_fishes[i].Health}, возраст: {_fishes[i].Age}");
             }
         }
 
@@ -73,8 +67,18 @@
         {
             for (int i = 0; i < _fishes.Count; i++)
             {
-                if (_fishes[i].Health < 0)
+                if (_fishes[i].Health <= 0)
                     _fishes.RemoveAt(i);
+            }
+        }
+
+        private void Fill()
+        {
+            int startAmount = 10;
+
+            for (int i = 0; i < startAmount; i++)
+            {
+                AddFish();
             }
         }
     }
@@ -107,6 +111,8 @@
 
     class Fish
     {
+        private int _minHealth = 0;
+
         public Fish(string name, int health, int age)
         {
             Name = name;
@@ -124,6 +130,9 @@
         {
             Health -= 10;
             Age += 1;
+
+            if (Health < _minHealth)
+                Health = _minHealth;
         }
     }
 
@@ -193,19 +202,6 @@
 
         public string Name { get; private set; }
 
-        private string ToWelcome()
-        {
-            Console.WriteLine("Как Вас зовут?");
-            string? userName = Console.ReadLine();
-
-            if (userName == null)
-            {
-                return userName = "Аноним";
-            }
-
-            return userName;
-        }
-
         public void Run()
         {
             const string CommandStartALife = "1";
@@ -217,7 +213,7 @@
             Console.WriteLine($"{CommandStartALife}-Начать жизнь в аквариуме");
             Console.WriteLine($"{CommandExit}-Выйти");
 
-            string? userInput = Console.ReadLine();
+            string userInput = Console.ReadLine()!;
             bool isProgramOn = true;
 
             while (isProgramOn)
@@ -233,7 +229,8 @@
                         break;
 
                     default:
-                        Console.WriteLine("Ввведите цифру пункта меню");
+                        Console.WriteLine("Нужно ввести цифру пункта меню");
+                        isProgramOn = false;
                         break;
                 }
             }
@@ -277,7 +274,7 @@
                         isUserChoice = false;
                         break;
                 }
-            }
+            }     
         }
 
         private void AskRemoveFish()
@@ -328,6 +325,19 @@
             }
 
             Console.ReadKey();
+        }
+
+        private string ToWelcome()
+        {
+            Console.WriteLine("Как Вас зовут?");
+            string? userName = Console.ReadLine();
+
+            if (userName == null)
+            {
+                return userName = "Аноним";
+            }
+
+            return userName;
         }
     }
 }

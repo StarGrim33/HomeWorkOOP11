@@ -63,7 +63,7 @@
             Console.WriteLine("Одна итерация старения прошла, нажмите любую клавишу");
         }
 
-        public void RemoveDead()
+        public void RemoveDeadFishes()
         {
             for (int i = 0; i < _fishes.Count; i++)
             {
@@ -87,11 +87,11 @@
     {
         private static Random _random = new();
 
-        private List<Fish> _fishTemplate;
+        private List<Fish> _fishTemplates;
 
         public FishBuilder()
         {
-            _fishTemplate = new List<Fish>()
+            _fishTemplates = new List<Fish>()
             {
                 new DropFish("Рыба капля", 120, 1),
                 new ClowFish("Рыба клоун", 160, 1),
@@ -103,8 +103,8 @@
 
         public Fish CreateRandomFish()
         {
-            int randomIndex = _random.Next(_fishTemplate.Count);
-            Fish fish = _fishTemplate[randomIndex];
+            int randomIndex = _random.Next(_fishTemplates.Count);
+            Fish fish = _fishTemplates[randomIndex];
             return new Fish(fish.Name, fish.Health, fish.Age);
         }
     }
@@ -236,7 +236,7 @@
             }
         }
 
-        private void AskAddFishes()
+        private void AskAddOrRemoveFishes()
         {
             const string CommandAddFishes = "1";
             const string CommandRemoveFishes = "2";
@@ -311,12 +311,12 @@
             while (_aquarium.HasAliveFishes)
             {
                 _aquarium.SkipDay();
-                _aquarium.RemoveDead();
+                _aquarium.RemoveDeadFishes();
 
                 Console.Clear();
 
                 _aquarium.ShowPopulation();
-                AskAddFishes();
+                AskAddOrRemoveFishes();
             }
 
             if (_aquarium.HasAliveFishes == false)

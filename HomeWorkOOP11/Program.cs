@@ -65,11 +65,19 @@
 
         public void RemoveDeadFishes()
         {
-            for (int i = 0; i < _fishes.Count; i++)
+            //for (int i = 0; i < _fishes.Count; i++)
+            //{
+            //    if (_fishes[i].Health <= 0)
+            //    {
+            //        _fishes.RemoveAt(i);
+            //    }
+            //}
+
+            foreach(Fish fish in _fishes.ToList())
             {
-                if (_fishes[i].Health <= 0)
+                if(fish.Health <= 0)
                 {
-                    _fishes.RemoveAt(i--);
+                    _fishes.Remove(fish);
                 }
             }
         }

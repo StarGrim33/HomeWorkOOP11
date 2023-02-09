@@ -68,7 +68,9 @@
             for (int i = 0; i < _fishes.Count; i++)
             {
                 if (_fishes[i].Health <= 0)
-                    _fishes.RemoveAt(i);
+                {
+                    _fishes.RemoveAt(i--);
+                }
             }
         }
 
@@ -222,6 +224,7 @@
                 {
                     case CommandStartALife:
                         Start();
+                        isProgramOn = false;
                         break;
 
                     case CommandExit:
@@ -236,7 +239,7 @@
             }
         }
 
-        private void AskAddOrRemoveFishes()
+        private void ShowFeatures()
         {
             const string CommandAddFishes = "1";
             const string CommandRemoveFishes = "2";
@@ -316,7 +319,7 @@
                 Console.Clear();
 
                 _aquarium.ShowPopulation();
-                AskAddOrRemoveFishes();
+                ShowFeatures();
             }
 
             if (_aquarium.HasAliveFishes == false)
